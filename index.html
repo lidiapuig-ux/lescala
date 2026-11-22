@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>L'escala · 282</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE: íntim, d'arxiu, pausat — com algú que et deixa entrar a l'escala.
+   IDEA: el directori del portal: cada porta té un nom fins que deixa de tenir-lo.
+   PICTURE: la façana / la secció de l'edifici, gran i horitzontal, amb els pisos que s'il·luminen.
+   COLOUR i TYPE: blanc de paper, tinta negra, verd del rètol de la ferreteria; Instrument Serif + Work Sans.
+   LAYOUT: capçalera fina, l'edifici ocupant la pantalla, la línia del temps a sota com un passamà. */
+:root{color-scheme:light;--bg:#fff;--ink:#141312;--mute:#6f6a63;--line:#e3dfd8;--acc:#2f5443;--card:#f5f3ef}
+*{box-sizing:border-box;min-width:0}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Work Sans",system-ui,sans-serif;overflow-x:clip;display:flex;flex-direction:column}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
+header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 24px;padding:14px max(3vw,16px) 10px}
+.brand{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.brand h1{font:400 clamp(30px,3.4vw,40px)/1.05 "Instrument Serif",serif;margin:0}
+.brand span{color:var(--mute);font-size:14px}
+.tools{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.lang{display:flex;border:1px solid var(--line);border-radius:999px;padding:3px}
+.lang button{border:0;background:none;border-radius:999px;min-width:44px;min-height:38px;font-size:13px;font-weight:600;color:var(--mute)}
+.lang button[aria-pressed=true]{background:var(--ink);color:#fff}
+.lang button:hover:not([aria-pressed=true]){color:var(--ink)}
+.toggle{border:1px solid var(--ink);background:none;border-radius:999px;padding:10px 20px;min-height:44px;font-size:15px;transition:background .2s,color .2s}
+.toggle:hover,.toggle[aria-pressed=true]{background:var(--ink);color:#fff}
+main{flex:1;display:flex;flex-direction:column}
+.stage{display:flex;justify-content:center;padding:4px max(3vw,16px) 0}
+.frame{position:relative;display:inline-block;line-height:0;transition:opacity .35s ease}
+.frame.out{opacity:0}
+.frame img{display:block;max-width:100%;max-height:calc(100svh - 250px);min-height:200px;width:auto;height:auto}
+.hs{position:absolute;display:block;border:0;padding:0;background:none;transition:backdrop-filter .25s,box-shadow .25s,background .25s}
+.frame:hover .hs{backdrop-filter:brightness(.8) saturate(.85)}
+.frame .hs:hover,.frame .hs:focus-visible{backdrop-filter:brightness(1.3) saturate(1.1);background:radial-gradient(ellipse at 50% 30%,rgba(255,236,200,.3),rgba(255,236,200,0) 70%);box-shadow:inset 0 0 0 1px rgba(255,250,240,.85);outline:none}
+.hs b{position:absolute;left:6px;top:6px;line-height:1.2;font:500 13px "Work Sans",sans-serif;background:rgba(20,18,16,.85);color:#f6f1e8;padding:5px 9px;border-radius:3px;opacity:0;transform:translateY(4px);transition:.2s;white-space:nowrap;pointer-events:none}
+.hs:hover b,.hs:focus-visible b{opacity:1;transform:none}
+.info{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:6px 28px;padding:14px max(3vw,16px) 0}
+.info .t{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 16px}
+.info .yr{font-size:14px;color:var(--acc);font-weight:600}
+.info h2{font:400 clamp(28px,2.6vw,36px)/1.1 "Instrument Serif",serif;margin:0}
+.info p{margin:0;max-width:62ch}
+.info .hint{color:var(--mute);font-size:14px}
+/* línia del temps */
+.timeline{padding:4px max(3vw,16px) 18px}
+.track{position:relative;height:62px;margin:0 14px}
+.rail{position:absolute;left:0;right:0;top:22px;height:2px;background:var(--line)}
+.fill{position:absolute;left:0;top:22px;height:2px;background:var(--ink);transition:width .35s}
+.dec{position:absolute;top:16px;width:1px;height:14px;background:#cfcac2}
+.dec span{position:absolute;top:20px;left:50%;transform:translateX(-50%);font-size:13px;color:var(--mute)}
+.dec.hide-n span{display:none}
+.stop{position:absolute;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;background:none;border:0;padding:6px 8px;min-width:44px;min-height:44px}
+.stop i{width:16px;height:16px;border-radius:50%;border:2px solid var(--ink);background:#fff;margin-top:8px;transition:.25s}
+.stop span{font-size:13px;margin-top:22px;white-space:nowrap;font-weight:600}
+.stop[aria-current=true] i{background:var(--ink);transform:scale(1.25)}
+.stop:hover i{background:var(--acc);border-color:var(--acc)}
+/* pis */
+.pis{padding:0 max(3vw,16px) 48px}
+.pis figure{margin:0}
+.pis .pic{width:100%;background-repeat:no-repeat;background-color:var(--card)}
+.pis .pic.ph{max-height:calc(100svh - 170px)}
+.pis .pic img{display:block;width:100%;max-height:calc(100svh - 170px);object-fit:cover}
+.pis figcaption{font-size:14px;color:var(--mute);margin-top:10px}
+.back{background:none;border:0;padding:6px 0;min-height:44px;font-size:15px;color:var(--mute)}
+.back:hover{color:var(--ink)}
+.fitxa{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px clamp(24px,5vw,72px);margin-top:36px;border-top:1px solid var(--ink);padding-top:28px}
+.fitxa .head{grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 18px}
+.fitxa .yr{font-size:14px;color:var(--acc);font-weight:600}
+.fitxa h2{font:400 clamp(36px,4vw,54px)/1.05 "Instrument Serif",serif;margin:0;text-wrap:balance}
+.fitxa dl{margin:0;display:grid;grid-template-columns:minmax(0,10em) minmax(0,1fr);border-top:1px solid var(--line);align-self:start}
+.fitxa dt,.fitxa dd{margin:0;padding:11px 0;border-bottom:1px solid var(--line)}
+.fitxa dt{color:var(--mute);font-size:14px;padding-top:13px}
+.fitxa dd.buit{color:var(--mute)}
+.story h3{font:400 26px/1.2 "Instrument Serif",serif;margin:0 0 10px}
+.story p{margin:0 0 14px;max-width:62ch}
+.story h3.mem{margin-top:26px}.story blockquote{margin:12px 0 0;font:italic 400 clamp(22px,2vw,27px)/1.3 "Instrument Serif",serif;padding-left:18px;border-left:2px solid var(--acc)}
+.story cite{display:block;margin-top:10px;padding-left:20px;font:400 14px "Work Sans",sans-serif;color:var(--mute);font-style:normal}
+.nav{grid-column:1/-1;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:12px}
+.nav button{border:1px solid var(--line);background:none;border-radius:999px;padding:10px 18px;min-height:44px;font-size:14px}
+.nav button:hover{border-color:var(--ink)}
+.note{grid-column:1/-1;font-size:13px;color:var(--mute);margin:0}
+@media(max-width:800px){.fitxa{grid-template-columns:minmax(0,1fr)}.frame img{max-height:none}}
+@media(max-width:600px){.dec.odd span{display:none}.stop span,.dec span{font-size:12px}.brand span{display:none}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><h1>L'escala</h1><span id="sub"></span></div>
+  <div class="tools">
+    <div class="lang" role="group" aria-label="Idioma / Language">
+      <button data-l="ca">CA</button><button data-l="es">ES</button><button data-l="en">EN</button>
+    </div>
+    <button class="toggle" id="toggle" aria-pressed="false"></button>
+  </div>
+</header>
+<main id="app"></main>
+<script>
+{
+/* ================= TEXTOS DE LA INTERFÍCIE ================= */
+const T = {
+  ca:{sub:"La memòria d'un edifici · número 282", sec:'Veure la secció', fac:'Veure la façana',
+      hintSec:"Passa per sobre d'un pis i entra-hi.", hintFac:'Obre la secció per veure qui hi viu.',
+      back:'Tornar a la secció', story:'La seva història', mem:'El record', who:'Qui hi vivia?', note:'Imatge provisional: retall de la secció fins que hi hagi la foto del pis.',
+      enter:'Entrar a', tl:'Línia del temps', secAlt:"Secció de l'edifici", facAlt:"Façana de l'edifici",
+      floor:(f,d)=>`${['','1r','2n','3r','4t','5è','6è'][f]}${d?' '+d+'a':''}`,
+      c:{familia:'Família',membres:'Membres',ofici:'Ofici',procedencia:'Procedència',anys:"Anys a l'escala",recorda:'Qui ho recorda',
+         portava:'Qui la portava',passava:'Què hi passava',des:'Des de',fins:'Fins a',us:'Ús',llicencia:'Llicència',empresa:'Empresa',propietari:'Propietari',viu:'Qui hi viu'}},
+  es:{sub:'La memoria de un edificio · número 282', sec:'Ver la sección', fac:'Ver la fachada',
+      hintSec:'Pasa por encima de un piso y entra.', hintFac:'Abre la sección para ver quién vive allí.',
+      back:'Volver a la sección', story:'Su historia', mem:'El recuerdo', who:'¿Quién vivía aquí?', note:'Imagen provisional: recorte de la sección hasta que esté la foto del piso.',
+      enter:'Entrar en', tl:'Línea del tiempo', secAlt:'Sección del edificio', facAlt:'Fachada del edificio',
+      floor:(f,d)=>`${f}º${d?' '+d+'ª':''}`,
+      c:{familia:'Familia',membres:'Miembros',ofici:'Oficio',procedencia:'Procedencia',anys:'Años en la escalera',recorda:'Quién lo recuerda',
+         portava:'Quién la llevaba',passava:'Qué pasaba allí',des:'Desde',fins:'Hasta',us:'Uso',llicencia:'Licencia',empresa:'Empresa',propietari:'Propietario',viu:'Quién vive allí'}},
+  en:{sub:'The memory of a building · number 282', sec:'See the section', fac:'See the façade',
+      hintSec:'Hover over a flat and step inside.', hintFac:'Open the section to see who lives here.',
+      back:'Back to the section', story:'Their story', mem:'The memory', who:'Who lived here?', note:'Placeholder image: a crop of the section until the photo of the flat arrives.',
+      enter:'Enter', tl:'Timeline', secAlt:'Section of the building', facAlt:'Façade of the building',
+      floor:(f,d)=>`Floor ${f}${d?', door '+d:''}`,
+      c:{familia:'Family',membres:'Members',ofici:'Trade',procedencia:'Came from',anys:'Years in the building',recorda:'Who remembers it',
+         portava:'Run by',passava:'What happened there',des:'Since',fins:'Until',us:'Use',llicencia:'Licence',empresa:'Company',propietari:'Owner',viu:'Who lives there'}}
+};
+const CAMPS = {
+  'veí':['familia','membres','ofici','procedencia','anys','recorda'],
+  'botiga':['portava','passava','des','fins','recorda'],
+  'turístic':['us','llicencia','des','viu','recorda'],
+  'oficina':['us','empresa','des','viu','recorda'],
+  'en venda':['us','propietari','des','viu','recorda'],
+  'buit':['us','des','viu','recorda']
+};
+
+/* ================= CONTINGUT =================
+   r = [x1, y1, x2, y2] en píxels de la imatge de la secció.
+   pis: [planta, porta] → el nom es genera en cada idioma. nom: {ca,es,en} per als baixos.
+   familia / ocupant: el nom que surt a la fitxa. fitxa: {membres:{ca,es,en}, ...} o text pla.
+   foto: 'img/...' quan hi hagi la imatge del pis. record: {ca,es,en} → cita destacada. */
+const FASES = [
+  { id:'1960', any:1960, etiqueta:{ca:'1960',es:'1960',en:'1960'},
+    titol:{ca:"L'escala plena",es:'La escalera llena',en:'A full stairwell'},
+    text:{ca:'Botigues als baixos i una família a cada porta. Tothom sap qui viu a cada replà.',
+          es:'Tiendas en los bajos y una familia en cada puerta. Todo el mundo sabe quién vive en cada rellano.',
+          en:'Shops on the ground floor and a family behind every door. Everyone knows who lives on each landing.'},
+    facana:'img/facana-1960.jpg', seccio:'img/seccio-1960.jpg', mida:[1671,941],
+    pisos:[
+      {id:'5-1', pis:[5,1], r:[575,160,850,272], tipus:'veí', foto:'img/pis-1960-5-1.jpg',
+        escena:{ca:'Un home escriu sol a la taula.',es:'Un hombre escribe solo en la mesa.',en:'A man writes alone at his table.'},
+        familia:'Soler i Vidal',
+        fitxa:{
+          membres:{ca:'1 — Miquel Soler Vidal, 48 anys.',es:'1 — Miquel Soler Vidal, 48 años.',en:'1 — Miquel Soler Vidal, aged 48.'},
+          ofici:{ca:'Comptable en una petita empresa tèxtil de Barcelona.',es:'Contable en una pequeña empresa textil de Barcelona.',en:'Bookkeeper at a small textile firm in Barcelona.'},
+          procedencia:{ca:'Manresa, Catalunya. Va arribar a Barcelona buscant oportunitats laborals després de la Guerra Civil.',es:'Manresa, Cataluña. Llegó a Barcelona buscando oportunidades laborales después de la Guerra Civil.',en:'Manresa, Catalonia. He came to Barcelona looking for work after the Civil War.'},
+          anys:{ca:'14 anys (des de 1946).',es:'14 años (desde 1946).',en:'14 years (since 1946).'},
+          recorda:{ca:'Núria Puig, filla dels veïns del 5è 2a.',es:'Núria Puig, hija de los vecinos del 5º 2ª.',en:'Núria Puig, daughter of the neighbours on floor 5, door 2.'}},
+        historia:{
+          ca:["En Miquel vivia sol des que havia perdut la seva dona, uns anys enrere. Treballava de comptable i cada tarda tornava al pis, on passava llargues estones assegut a la taula del menjador, escrivint cartes a familiars i amics.","Era un home discret, de rutines senzilles. Els veïns el recordaven pel soroll de la ràdio, les finestres sempre entreobertes i les salutacions breus que intercanviava a l'escala."],
+          es:["Miquel vivía solo desde que había perdido a su mujer, unos años atrás. Trabajaba de contable y cada tarde volvía al piso, donde pasaba largos ratos sentado a la mesa del comedor, escribiendo cartas a familiares y amigos.","Era un hombre discreto, de rutinas sencillas. Los vecinos lo recordaban por el sonido de la radio, las ventanas siempre entreabiertas y los saludos breves que intercambiaba en la escalera."],
+          en:["Miquel had lived alone since losing his wife a few years earlier. He worked as a bookkeeper, and every evening he came back to the flat and spent long hours at the dining table, writing letters to family and friends.","He was a quiet man of simple routines. The neighbours remembered him for the sound of his radio, the windows always left ajar and the brief greetings he exchanged on the stairs."]},
+        record:{ca:'Sempre el veies assegut a la mateixa taula, escrivint. De vegades li portàvem una mica de menjar i ens convidava a entrar. Era un home de poques paraules, però molt amable.',
+                es:'Siempre lo veías sentado en la misma mesa, escribiendo. A veces le llevábamos un poco de comida y nos invitaba a entrar. Era un hombre de pocas palabras, pero muy amable.',
+                en:"You'd always see him sitting at the same table, writing. Sometimes we'd bring him a bit of food and he'd ask us in. He was a man of few words, but very kind."},
+        recordAutor:{ca:'Núria Puig, filla dels veïns del 5è 2a',es:'Núria Puig, hija de los vecinos del 5º 2ª',en:'Núria Puig, daughter of the neighbours on floor 5, door 2'}},
+      {id:'5-2', pis:[5,2], r:[855,160,1148,272], tipus:'veí', foto:'img/pis-1960-5-2.jpg',
+        escena:{ca:'La Maria cus asseguda al llit; en Francesc llegeix el diari.',es:'Maria cose sentada en la cama; Francesc lee el periódico.',en:'Maria sews, sitting on the bed; Francesc reads the paper.'},
+        familia:'Puig i Rovira',
+        fitxa:{
+          membres:{ca:'2 — Maria Rovira (43 anys) i Francesc Puig (47 anys).',es:'2 — Maria Rovira (43 años) y Francesc Puig (47 años).',en:'2 — Maria Rovira (43) and Francesc Puig (47).'},
+          ofici:{ca:'La Maria era modista i feia encàrrecs de costura des de casa. En Francesc treballava com a administratiu en una empresa de transports.',es:'Maria era modista y hacía encargos de costura desde casa. Francesc trabajaba como administrativo en una empresa de transportes.',en:'Maria was a dressmaker who took in sewing work at home. Francesc was a clerk at a haulage company.'},
+          procedencia:{ca:'Barcelona. Tots dos havien crescut al barri, en famílies treballadores.',es:'Barcelona. Los dos habían crecido en el barrio, en familias trabajadoras.',en:'Barcelona. Both had grown up in the neighbourhood, in working-class families.'},
+          anys:{ca:'18 anys (des de 1942).',es:'18 años (desde 1942).',en:'18 years (since 1942).'},
+          recorda:{ca:'Núria Puig, filla del matrimoni.',es:'Núria Puig, hija del matrimonio.',en:'Núria Puig, the couple\'s daughter.'}},
+        historia:{
+          ca:["La Maria i en Francesc feia gairebé vint anys que vivien en aquell pis. S'hi havien instal·lat poc després de casar-se i, amb el temps, havien convertit les dues habitacions i el petit menjador en una llar plena de records.","La Maria passava moltes hores cosint per a les veïnes del barri. Sempre tenia alguna peça pendent, una camisa per arreglar o un vestit per acabar. En Francesc arribava de la feina a mitja tarda i acostumava a llegir el diari mentre ella treballava.","No eren gaire de sortir. Els diumenges rebien la visita de la seva filla, que ja vivia fora de casa, i preparaven el dinar plegats. El pis conservava els mateixos mobles de quan s'havien casat, els llibres acumulats durant anys i les fotografies familiars damunt la prestatgeria."],
+          es:["Maria y Francesc llevaban casi veinte años viviendo en aquel piso. Se habían instalado poco después de casarse y, con el tiempo, habían convertido las dos habitaciones y el pequeño comedor en un hogar lleno de recuerdos.","Maria pasaba muchas horas cosiendo para las vecinas del barrio. Siempre tenía alguna prenda pendiente, una camisa por arreglar o un vestido por terminar. Francesc llegaba del trabajo a media tarde y solía leer el periódico mientras ella trabajaba.","No eran muy de salir. Los domingos recibían la visita de su hija, que ya vivía fuera de casa, y preparaban la comida juntos. El piso conservaba los mismos muebles de cuando se casaron, los libros acumulados durante años y las fotografías familiares sobre la estantería."],
+          en:["Maria and Francesc had lived in that flat for almost twenty years. They had moved in shortly after their wedding and, over time, had turned the two bedrooms and the small dining room into a home full of memories.","Maria spent long hours sewing for the women of the neighbourhood. There was always something waiting: a shirt to mend or a dress to finish. Francesc came home from work in the late afternoon and usually read the paper while she worked.","They didn't go out much. On Sundays their daughter, who had already moved out, came to visit and they made lunch together. The flat kept the same furniture they had married with, the books gathered over the years and the family photographs on the shelves."]},
+        record:{ca:'Recordo la mare sempre amb alguna cosa entre les mans, cosint o arreglant roba. I el pare llegint el diari, dret al costat de la finestra. Aquella habitació era on passaven gairebé totes les tardes. Semblava que el temps no hi passés.',
+                es:'Recuerdo a mi madre siempre con algo entre las manos, cosiendo o arreglando ropa. Y a mi padre leyendo el periódico, de pie junto a la ventana. Aquella habitación era donde pasaban casi todas las tardes. Parecía que allí no pasara el tiempo.',
+                en:"I remember my mother always with something in her hands, sewing or mending clothes. And my father reading the paper, standing by the window. That room was where they spent almost every afternoon. It was as if time didn't pass in there."},
+        recordAutor:{ca:'Núria Puig, filla del matrimoni',es:'Núria Puig, hija del matrimonio',en:'Núria Puig, the couple\'s daughter'}},
+      {id:'4-1', pis:[4,1], r:[575,282,908,385], tipus:'veí', foto:'img/pis-1960-4-1.jpg',
+        escena:{ca:'Tres homes al voltant de la taula del menjador.',es:'Tres hombres alrededor de la mesa del comedor.',en:'Three men around the dining table.'},
+        familia:'Ferrer i Casals',
+        fitxa:{
+          membres:{ca:'3 — Josep Ferrer (42 anys), Antoni Ferrer (39 anys) i Ramon Casals (44 anys).',es:'3 — Josep Ferrer (42 años), Antoni Ferrer (39 años) y Ramon Casals (44 años).',en:'3 — Josep Ferrer (42), Antoni Ferrer (39) and Ramon Casals (44).'},
+          ofici:{ca:'Josep treballava en una impremta, Antoni era empleat de banca i Ramon treballava en una fàbrica metal·lúrgica.',es:'Josep trabajaba en una imprenta, Antoni era empleado de banca y Ramon trabajaba en una fábrica metalúrgica.',en:'Josep worked at a printing press, Antoni was a bank clerk and Ramon worked in a metalworks factory.'},
+          procedencia:{ca:'Barcelona i Tarragona.',es:'Barcelona y Tarragona.',en:'Barcelona and Tarragona.'},
+          anys:{ca:'11 anys (des de 1949).',es:'11 años (desde 1949).',en:'11 years (since 1949).'},
+          recorda:{ca:'Teresa Martí, veïna del 4t 2a.',es:'Teresa Martí, vecina del 4º 2ª.',en:'Teresa Martí, neighbour from floor 4, door 2.'}},
+        historia:{
+          ca:["En Josep i l'Antoni eren germans i compartien pis amb en Ramon, un amic de tota la vida. Havien començat a viure junts per repartir-se les despeses del lloguer i, amb els anys, havien construït una petita família sense vincles de sang.","Cada vespre es reunien al voltant de la taula del menjador. Sopaven, jugaven a cartes i comentaven les notícies del dia. Els diumenges rebien visites d'amics i coneguts, i el pis s'omplia de converses que sovint s'allargaven fins ben entrada la nit.","Els veïns recordaven aquell habitatge com un dels més animats de l'escala, un lloc on sempre hi havia una cadira disponible per a qui volgués entrar."],
+          es:["Josep y Antoni eran hermanos y compartían piso con Ramon, un amigo de toda la vida. Habían empezado a vivir juntos para repartirse los gastos del alquiler y, con los años, habían construido una pequeña familia sin lazos de sangre.","Cada noche se reunían alrededor de la mesa del comedor. Cenaban, jugaban a cartas y comentaban las noticias del día. Los domingos recibían visitas de amigos y conocidos, y el piso se llenaba de conversaciones que a menudo se alargaban hasta bien entrada la noche.","Los vecinos recordaban aquella vivienda como una de las más animadas de la escalera, un lugar donde siempre había una silla libre para quien quisiera entrar."],
+          en:["Josep and Antoni were brothers, and they shared the flat with Ramon, a lifelong friend. They had moved in together to split the rent and, over the years, had built a small family with no ties of blood.","Every evening they gathered around the dining table. They ate, played cards and talked over the day's news. On Sundays friends and acquaintances came by, and the flat filled with conversations that often ran late into the night.","The neighbours remembered it as one of the liveliest homes in the building, a place where there was always a free chair for anyone who wanted to come in."]},
+        record:{ca:'Sempre estaven tots tres al voltant de la taula. Si passaves pel replà, senties les seves converses i les rialles. A vegades deixaven la porta oberta i et convidaven a fer un cafè.',
+                es:'Siempre estaban los tres alrededor de la mesa. Si pasabas por el rellano, oías sus conversaciones y las risas. A veces dejaban la puerta abierta y te invitaban a un café.',
+                en:"The three of them were always around the table. If you walked past on the landing, you could hear them talking and laughing. Sometimes they'd leave the door open and ask you in for a coffee."},
+        recordAutor:{ca:'Teresa Martí, veïna del 4t 2a',es:'Teresa Martí, vecina del 4º 2ª',en:'Teresa Martí, neighbour from floor 4, door 2'}},
+      {id:'4-2', pis:[4,2], r:[912,282,1148,385], tipus:'veí', foto:'img/pis-1960-4-2.jpg',
+        escena:{ca:'L\'Antonio i la María juguen amb blocs a terra; els pares els miren.',es:'Antonio y María juegan con bloques en el suelo; sus padres los miran.',en:'Antonio and María play with blocks on the floor; their parents watch.'},
+        familia:'Martínez García',
+        fitxa:{
+          membres:{ca:'4 — José Martínez (38 anys), Carmen García (35 anys), Antonio (9 anys) i María (6 anys).',es:'4 — José Martínez (38 años), Carmen García (35 años), Antonio (9 años) y María (6 años).',en:'4 — José Martínez (38), Carmen García (35), Antonio (9) and María (6).'},
+          ofici:{ca:'En José treballava com a mecànic en un taller del barri. La Carmen era mestressa de casa i, ocasionalment, feia feines de neteja per a altres famílies.',es:'José trabajaba como mecánico en un taller del barrio. Carmen era ama de casa y, de vez en cuando, hacía trabajos de limpieza para otras familias.',en:'José worked as a mechanic in a local garage. Carmen kept the house and now and then did cleaning work for other families.'},
+          procedencia:{ca:'Almeria, Andalusia. Havien arribat a Barcelona l\'any 1952 buscant millors oportunitats laborals.',es:'Almería, Andalucía. Habían llegado a Barcelona en 1952 buscando mejores oportunidades laborales.',en:'Almería, Andalusia. They had come to Barcelona in 1952 looking for better work.'},
+          anys:{ca:'6 anys (des de 1954).',es:'6 años (desde 1954).',en:'6 years (since 1954).'},
+          recorda:{ca:'María Martínez, filla petita del matrimoni.',es:'María Martínez, hija pequeña del matrimonio.',en:'María Martínez, the couple\'s younger daughter.'}},
+        historia:{
+          ca:["La família Martínez havia arribat a Barcelona amb poques pertinences i l'esperança de construir una vida millor. Després de passar els primers anys en una habitació rellogada, havien aconseguit llogar aquell pis, que es convertiria en la primera llar pròpia dels seus fills.","El menjador era el centre de la vida familiar. Els nens hi jugaven després de l'escola mentre la Carmen cosia o preparava el sopar. En José arribava del taller al vespre, sovint cansat, i s'asseia a llegir el diari abans de reunir-se amb la família.","Els diumenges acostumaven a rebre familiars que també havien emigrat a Barcelona. El pis s'omplia de converses, menjars compartits i records del poble que havien deixat enrere.","Tot i les dificultats econòmiques, els pares procuraven que als fills no els faltés res. Molts dels mobles eren de segona mà i gairebé tots els objectes de la casa tenien una història."],
+          es:["La familia Martínez había llegado a Barcelona con pocas pertenencias y la esperanza de construir una vida mejor. Tras pasar los primeros años en una habitación realquilada, habían conseguido alquilar aquel piso, que se convertiría en el primer hogar propio de sus hijos.","El comedor era el centro de la vida familiar. Los niños jugaban allí después del colegio mientras Carmen cosía o preparaba la cena. José llegaba del taller por la noche, a menudo cansado, y se sentaba a leer el periódico antes de reunirse con la familia.","Los domingos solían recibir a familiares que también habían emigrado a Barcelona. El piso se llenaba de conversaciones, comidas compartidas y recuerdos del pueblo que habían dejado atrás.","A pesar de las dificultades económicas, los padres procuraban que a sus hijos no les faltara de nada. Muchos de los muebles eran de segunda mano y casi todos los objetos de la casa tenían una historia."],
+          en:["The Martínez family had arrived in Barcelona with few belongings and the hope of building a better life. After their first years in a sublet room, they had managed to rent this flat, which became the first real home their children had.","The dining room was the centre of family life. The children played there after school while Carmen sewed or made dinner. José came back from the garage in the evening, often tired, and sat down to read the paper before joining the family.","On Sundays they usually had relatives over who had also moved to Barcelona. The flat filled with conversation, shared meals and memories of the village they had left behind.","Money was tight, but the parents made sure the children never went without. Much of the furniture was second-hand, and almost everything in the house had a story."]},
+        record:{ca:'No teníem gaire espai, però recordo aquella casa sempre plena de vida. El meu germà i jo jugàvem a terra mentre la mare cosia i el pare llegia el diari. Quan penso en la meva infància, sempre em ve al cap aquell menjador i la llum que entrava per la finestra.',
+                es:'No teníamos mucho espacio, pero recuerdo aquella casa siempre llena de vida. Mi hermano y yo jugábamos en el suelo mientras mi madre cosía y mi padre leía el periódico. Cuando pienso en mi infancia, siempre me viene a la cabeza aquel comedor y la luz que entraba por la ventana.',
+                en:"We didn't have much space, but I remember that home always full of life. My brother and I played on the floor while my mother sewed and my father read the paper. When I think of my childhood, I always see that dining room and the light coming in through the window."},
+        recordAutor:{ca:'María Martínez, filla de la família',es:'María Martínez, hija de la familia',en:'María Martínez, daughter of the family'}},
+      {id:'3-1', pis:[3,1], r:[575,395,908,495], tipus:'veí', foto:'img/pis-1960-3-1.jpg',
+        escena:{ca:'La Dolores cuina, l\'àvia Carmen prepara la verdura i en Miguel juga a terra.',es:'Dolores cocina, la abuela Carmen prepara la verdura y Miguel juega en el suelo.',en:'Dolores cooks, Grandma Carmen prepares the greens and Miguel plays on the floor.'},
+        familia:'Fernández López',
+        fitxa:{
+          membres:{ca:'5 — Manuel Fernández (45 anys), Dolores López (41 anys), Carmen Fernández (72 anys), Miguel (11 anys) i Isabel (8 anys).',es:'5 — Manuel Fernández (45 años), Dolores López (41 años), Carmen Fernández (72 años), Miguel (11 años) e Isabel (8 años).',en:'5 — Manuel Fernández (45), Dolores López (41), Carmen Fernández (72), Miguel (11) and Isabel (8).'},
+          ofici:{ca:'En Manuel treballava com a operari en una fàbrica metal·lúrgica. La Dolores s\'ocupava de les tasques domèstiques i, ocasionalment, rentava roba per a altres famílies. L\'àvia Carmen, ja jubilada, ajudava a cuidar els nets.',es:'Manuel trabajaba como operario en una fábrica metalúrgica. Dolores se ocupaba de las tareas domésticas y, de vez en cuando, lavaba ropa para otras familias. La abuela Carmen, ya jubilada, ayudaba a cuidar de los nietos.',en:'Manuel was a worker in a metalworks factory. Dolores ran the household and now and then took in washing for other families. Grandma Carmen, already retired, helped look after the grandchildren.'},
+          procedencia:{ca:'Jaén, Andalusia. En Manuel i la Dolores havien arribat a Barcelona l\'any 1948. L\'àvia Carmen s\'hi havia traslladat uns anys més tard, després de quedar vídua.',es:'Jaén, Andalucía. Manuel y Dolores habían llegado a Barcelona en 1948. La abuela Carmen se trasladó unos años más tarde, tras quedarse viuda.',en:'Jaén, Andalusia. Manuel and Dolores had come to Barcelona in 1948. Grandma Carmen followed a few years later, after she was widowed.'},
+          anys:{ca:'9 anys (des de 1951).',es:'9 años (desde 1951).',en:'9 years (since 1951).'},
+          recorda:{ca:'Isabel Fernández, filla petita de la família.',es:'Isabel Fernández, hija pequeña de la familia.',en:'Isabel Fernández, the family\'s younger daughter.'}},
+        historia:{
+          ca:["La família Fernández vivia en un pis modest on convivien tres generacions. Com moltes famílies arribades d'Andalusia durant la postguerra, havien deixat enrere el seu poble buscant feina i una vida més estable a Barcelona.","La cuina i el menjador compartien un mateix espai, que es convertia en el centre de la vida familiar. La Dolores passava bona part del dia preparant els àpats i organitzant la casa, mentre l'àvia Carmen s'encarregava de cuidar els nens quan tornaven de l'escola.","En Manuel treballava llargues jornades a la fàbrica i, quan arribava a casa, acostumava a llegir el diari assegut a la taula. Els nens feien els deures al menjador o jugaven a terra, sempre sota la mirada de l'àvia.","La presència de la Carmen era essencial per al funcionament de la llar. La seva petita pensió ajudava a completar els ingressos familiars i les seves històries mantenien viu el record del poble que havien deixat enrere.","Tot i que l'espai era reduït per a cinc persones, el pis representava l'estabilitat que havien buscat durant anys."],
+          es:["La familia Fernández vivía en un piso modesto donde convivían tres generaciones. Como muchas familias llegadas de Andalucía durante la posguerra, habían dejado atrás su pueblo buscando trabajo y una vida más estable en Barcelona.","La cocina y el comedor compartían un mismo espacio, que se convertía en el centro de la vida familiar. Dolores pasaba buena parte del día preparando las comidas y organizando la casa, mientras la abuela Carmen se encargaba de cuidar a los niños cuando volvían del colegio.","Manuel trabajaba largas jornadas en la fábrica y, cuando llegaba a casa, solía leer el periódico sentado a la mesa. Los niños hacían los deberes en el comedor o jugaban en el suelo, siempre bajo la mirada de la abuela.","La presencia de Carmen era esencial para que la casa funcionara. Su pequeña pensión ayudaba a completar los ingresos familiares y sus historias mantenían vivo el recuerdo del pueblo que habían dejado atrás.","Aunque el espacio era reducido para cinco personas, el piso representaba la estabilidad que habían buscado durante años."],
+          en:["The Fernández family lived in a modest flat shared by three generations. Like many families who came from Andalusia in the post-war years, they had left their village behind in search of work and a steadier life in Barcelona.","The kitchen and dining room were a single space, and it became the centre of family life. Dolores spent much of the day cooking and running the house, while Grandma Carmen looked after the children when they came home from school.","Manuel worked long shifts at the factory and, when he got home, usually read the paper sitting at the table. The children did their homework in the dining room or played on the floor, always under their grandmother's eye.","Carmen was essential to the running of the home. Her small pension helped make ends meet, and her stories kept alive the memory of the village they had left.","Small as it was for five people, the flat stood for the stability they had spent years looking for."]},
+        record:{ca:'La meva àvia sempre era a la cuina. Recordo el soroll de les olles, el pare amb el diari i la mare preparant el sopar. Érem cinc persones en un pis petit, però mai no em va semblar que faltés espai. La casa sempre estava plena de gent, de converses i de vida.',
+                es:'Mi abuela siempre estaba en la cocina. Recuerdo el ruido de las ollas, a mi padre con el periódico y a mi madre preparando la cena. Éramos cinco personas en un piso pequeño, pero nunca me pareció que faltara espacio. La casa siempre estaba llena de gente, de conversaciones y de vida.',
+                en:"My grandmother was always in the kitchen. I remember the clatter of the pots, my father with his paper and my mother making dinner. There were five of us in a small flat, but it never felt short of space. The house was always full of people, of talk, of life."},
+        recordAutor:{ca:'Isabel Fernández, filla de la família',es:'Isabel Fernández, hija de la familia',en:'Isabel Fernández, daughter of the family'}},
+      {id:'3-2', pis:[3,2], r:[912,395,1148,495], tipus:'veí', foto:'img/pis-1960-3-2.jpg',
+        escena:{ca:'En Joaquim pinta davant del cavallet, al costat de la finestra.',es:'Joaquim pinta frente al caballete, junto a la ventana.',en:'Joaquim paints at his easel, by the window.'},
+        familia:'Valls i Pujol',
+        fitxa:{
+          membres:{ca:'1 — Joaquim Valls Pujol, 74 anys.',es:'1 — Joaquim Valls Pujol, 74 años.',en:'1 — Joaquim Valls Pujol, aged 74.'},
+          ofici:{ca:'Pintor i antic professor de dibuix en una escola d\'arts i oficis de Barcelona. Ja jubilat, continuava pintant per encàrrec i per afició.',es:'Pintor y antiguo profesor de dibujo en una escuela de artes y oficios de Barcelona. Ya jubilado, seguía pintando por encargo y por afición.',en:'Painter and former drawing teacher at a Barcelona school of arts and crafts. Retired, he still painted on commission and for pleasure.'},
+          procedencia:{ca:'Barcelona, Catalunya. Nascut al barri de Gràcia, havia viscut tota la vida a la ciutat.',es:'Barcelona, Cataluña. Nacido en el barrio de Gràcia, había vivido toda la vida en la ciudad.',en:'Barcelona, Catalonia. Born in the Gràcia neighbourhood, he had lived in the city all his life.'},
+          anys:{ca:'23 anys (des de 1937).',es:'23 años (desde 1937).',en:'23 years (since 1937).'},
+          recorda:{ca:'Montserrat Riera, antiga veïna del 2n 2a.',es:'Montserrat Riera, antigua vecina del 2º 2ª.',en:'Montserrat Riera, former neighbour from floor 2, door 2.'}},
+        historia:{
+          ca:["En Joaquim vivia sol des de la mort de la seva dona, l'any 1953. Sense fills, havia convertit el menjador del seu pis en un petit taller de pintura, on passava la major part dels dies davant del cavallet, al costat de la finestra.","Durant anys havia treballat com a professor de dibuix, però la pintura sempre havia estat la seva gran passió. Pintava paisatges de Barcelona, retrats de coneguts i escenes quotidianes del barri. Moltes de les seves obres s'acumulaven recolzades contra les parets, entre llibres, pinzells i pots de pintura.","Era un home tranquil i reservat, però tenia una relació especial amb els infants de l'escala. De vegades els convidava a entrar per ensenyar-los els seus quadres o els regalava petits dibuixos fets en qualsevol tros de paper.","Els veïns el recordaven per l'olor de pintura que sortia del pis, la música clàssica que escoltava a la ràdio i la llum que sempre entrava per la finestra del menjador."],
+          es:["Joaquim vivía solo desde la muerte de su mujer, en 1953. Sin hijos, había convertido el comedor de su piso en un pequeño taller de pintura, donde pasaba la mayor parte de los días frente al caballete, junto a la ventana.","Durante años había trabajado como profesor de dibujo, pero la pintura siempre había sido su gran pasión. Pintaba paisajes de Barcelona, retratos de conocidos y escenas cotidianas del barrio. Muchas de sus obras se acumulaban apoyadas contra las paredes, entre libros, pinceles y botes de pintura.","Era un hombre tranquilo y reservado, pero tenía una relación especial con los niños de la escalera. A veces los invitaba a entrar para enseñarles sus cuadros o les regalaba pequeños dibujos hechos en cualquier trozo de papel.","Los vecinos lo recordaban por el olor a pintura que salía del piso, la música clásica que escuchaba en la radio y la luz que siempre entraba por la ventana del comedor."],
+          en:["Joaquim had lived alone since his wife died in 1953. With no children, he had turned the dining room into a small painting studio, where he spent most of his days at the easel, by the window.","For years he had taught drawing, but painting had always been his great passion. He painted Barcelona landscapes, portraits of people he knew and everyday scenes from the neighbourhood. Many of his canvases piled up against the walls, among books, brushes and paint pots.","He was a quiet, private man, but he had a special bond with the children in the building. Sometimes he invited them in to show them his paintings, or gave them little drawings made on any scrap of paper.","The neighbours remembered him for the smell of paint drifting from the flat, the classical music on his radio and the light that always came in through the dining-room window."]},
+        record:{ca:'Quan érem petits, ens quedàvem mirant com pintava. Tenia tota la casa plena de quadres i sempre ens deixava tocar els pinzells. Recordo que un dia em va dibuixar un retrat i me\'l va regalar. Encara el guardo.',
+                es:'Cuando éramos pequeños, nos quedábamos mirando cómo pintaba. Tenía toda la casa llena de cuadros y siempre nos dejaba tocar los pinceles. Recuerdo que un día me dibujó un retrato y me lo regaló. Todavía lo guardo.',
+                en:"When we were little, we'd stand and watch him paint. His whole flat was full of paintings and he always let us touch the brushes. One day he drew my portrait and gave it to me. I still have it."},
+        recordAutor:{ca:'Montserrat Riera, antiga veïna del 2n 2a',es:'Montserrat Riera, antigua vecina del 2º 2ª',en:'Montserrat Riera, former neighbour from floor 2, door 2'}},
+      {id:'2-1', pis:[2,1], r:[575,505,908,607], tipus:'veí', foto:'img/pis-1960-2-1.jpg',
+        escena:{ca:'La Mercè corregeix exercicis a la taula de la cuina.',es:'Mercè corrige ejercicios en la mesa de la cocina.',en:'Mercè marks schoolwork at the kitchen table.'},
+        familia:'Ferrer Solé',
+        fitxa:{
+          membres:{ca:'Mercè Ferrer (34 anys) i el seu marit, Antoni Solé (37 anys).',es:'Mercè Ferrer (34 años) y su marido, Antoni Solé (37 años).',en:'Mercè Ferrer (34) and her husband, Antoni Solé (37).'},
+          ofici:{ca:'Mercè era mestra d\'escola i Antoni treballava en una impremta.',es:'Mercè era maestra de escuela y Antoni trabajaba en una imprenta.',en:'Mercè was a schoolteacher and Antoni worked at a printing press.'},
+          procedencia:{ca:'Barcelona.',es:'Barcelona.',en:'Barcelona.'},
+          anys:{ca:'Des de 1954.',es:'Desde 1954.',en:'Since 1954.'},
+          recorda:{ca:'Teresa, veïna del 2n 1a.',es:'Teresa, vecina del 2º 1ª.',en:'Teresa, neighbour from floor 2, door 1.'}},
+        historia:{
+          ca:["La Mercè era mestra en una escola del barri. Cada tarda, quan tornava a casa, s'asseia a la taula del menjador per corregir exercicis, preparar les classes de l'endemà o escriure cartes a les seves antigues companyes d'estudis.","El pis era petit, i la cuina i el menjador compartien un mateix espai. La taula servia per a gairebé tot: menjar, llegir, treballar i rebre les visites. Sovint, mentre la Mercè preparava les seves lliçons, l'Antoni llegia al seu costat o ordenava papers de la impremta.","A diferència de moltes dones de la seva generació, la Mercè havia continuat exercint la seva professió després de casar-se. La feina formava part de la seva identitat i defensava que les nenes havien de tenir les mateixes oportunitats d'estudi que els nens.","Els diumenges, la parella acostumava a deixar oberta la porta de la galeria perquè entrés l'aire. La roba estesa, les cortines estampades i els llibres amuntegats sobre la taula formaven part del paisatge quotidià d'aquella casa."],
+          es:["Mercè era maestra en una escuela del barrio. Cada tarde, al volver a casa, se sentaba a la mesa del comedor para corregir ejercicios, preparar las clases del día siguiente o escribir cartas a sus antiguas compañeras de estudios.","El piso era pequeño, y la cocina y el comedor compartían un mismo espacio. La mesa servía para casi todo: comer, leer, trabajar y recibir visitas. A menudo, mientras Mercè preparaba sus lecciones, Antoni leía a su lado u ordenaba papeles de la imprenta.","A diferencia de muchas mujeres de su generación, Mercè había seguido ejerciendo su profesión después de casarse. El trabajo formaba parte de su identidad y defendía que las niñas tenían que tener las mismas oportunidades de estudio que los niños.","Los domingos, la pareja solía dejar abierta la puerta de la galería para que entrara el aire. La ropa tendida, las cortinas estampadas y los libros amontonados sobre la mesa formaban parte del paisaje cotidiano de aquella casa."],
+          en:["Mercè taught at a school in the neighbourhood. Every afternoon, when she got home, she sat at the dining table to mark schoolwork, prepare the next day's lessons or write letters to her old classmates.","The flat was small, and the kitchen and dining room shared a single space. The table was used for almost everything: eating, reading, working and having visitors. Often, while Mercè prepared her lessons, Antoni read beside her or sorted papers from the printing press.","Unlike many women of her generation, Mercè had kept working after she married. Her job was part of who she was, and she argued that girls should have the same chance to study as boys.","On Sundays the couple usually left the gallery door open to let the air in. The washing on the line, the patterned curtains and the books piled on the table were part of the everyday landscape of that home."]},
+        record:{ca:'La Mercè sempre tenia papers damunt la taula. De vegades la sentíem llegir en veu alta mentre preparava les classes. Deia que una casa no era només un lloc per viure-hi, sinó també per pensar, aprendre i fer coses.',
+                es:'Mercè siempre tenía papeles encima de la mesa. A veces la oíamos leer en voz alta mientras preparaba las clases. Decía que una casa no era solo un lugar para vivir, sino también para pensar, aprender y hacer cosas.',
+                en:"Mercè always had papers on the table. Sometimes we heard her reading aloud while she prepared her lessons. She used to say a home wasn't just a place to live, but a place to think, learn and make things."},
+        recordAutor:{ca:'Teresa, antiga veïna del 2n 1a',es:'Teresa, antigua vecina del 2º 1ª',en:'Teresa, former neighbour from floor 2, door 1'},
+        nota:{ca:'Relat fictici construït per al projecte L\'escala, ambientat en la Barcelona de 1960.',es:'Relato ficticio construido para el proyecto L\'escala, ambientado en la Barcelona de 1960.',en:'A fictional account written for the L\'escala project, set in 1960s Barcelona.'}},
+      {id:'2-2', pis:[2,2], r:[912,505,1148,607], tipus:'veí', escena:{ca:'Un menjador amb plantes i un sofà vermell.',es:'Un comedor con plantas y un sofá rojo.',en:'A dining room with plants and a red sofa.'}},
+      {id:'1-1', pis:[1,1], r:[575,617,908,717], tipus:'veí', escena:{ca:'Un home llegeix el diari; algú seu al seu costat.',es:'Un hombre lee el periódico; alguien se sienta a su lado.',en:'A man reads the paper; someone sits beside him.'}},
+      {id:'1-2', pis:[1,2], r:[912,617,1148,717], tipus:'veí', escena:{ca:'Un menjador amb un aparador ple de vaixella.',es:'Un comedor con un aparador lleno de vajilla.',en:'A dining room with a dresser full of china.'}},
+      {id:'porteria', nom:{ca:'Porteria',es:'Portería',en:'Entrance'}, r:[602,728,702,895], tipus:'botiga', escena:{ca:"El portal i l'escala.",es:'El portal y la escalera.',en:'The doorway and the stairs.'}},
+      {id:'ferreteria', nom:{ca:'Ferreteria Casa Vila',es:'Ferretería Casa Vila',en:'Casa Vila hardware shop'}, r:[765,728,918,895], tipus:'botiga', escena:{ca:'Els prestatges de la ferreteria.',es:'Las estanterías de la ferretería.',en:'The shelves of the hardware shop.'}},
+      {id:'garatge', nom:{ca:'Garatge',es:'Garaje',en:'Garage'}, r:[952,728,1125,895], tipus:'botiga', escena:{ca:'La persiana del garatge.',es:'La persiana del garaje.',en:'The garage shutter.'}},
+      {id:'bodega', nom:{ca:'Bodega El Raval',es:'Bodega El Raval',en:'El Raval wine bar'}, r:[1198,748,1322,872], tipus:'botiga', escena:{ca:'La bodega del costat, amb el tendal obert.',es:'La bodega de al lado, con el toldo abierto.',en:'The wine bar next door, awning out.'}}
+    ]},
+  { id:'avui', any:2026, etiqueta:{ca:'Avui',es:'Hoy',en:'Today'},
+    titol:{ca:'282-282',es:'282-282',en:'282-282'},
+    text:{ca:"L'edifici s'ha tornat a construir. Les portes ja no tenen nom.",
+          es:'El edificio se ha vuelto a construir. Las puertas ya no tienen nombre.',
+          en:'The building has been rebuilt. The doors no longer have names.'},
+    facana:'img/facana-avui.jpg', seccio:'img/seccio-avui.jpg', mida:[1672,940],
+    pisos:[
+      {id:'6', pis:[6], r:[608,158,1120,248], tipus:'oficina', ocupant:'TechFinder', escena:{ca:'Una oficina amb les cadires buides.',es:'Una oficina con las sillas vacías.',en:'An office with empty chairs.'}},
+      {id:'5-1', pis:[5,1], r:[608,260,818,345], tipus:'turístic', escena:{ca:'Un dormitori preparat per al proper hoste.',es:'Un dormitorio preparado para el próximo huésped.',en:'A bedroom made up for the next guest.'}},
+      {id:'5-2', pis:[5,2], r:[845,260,1120,345], tipus:'turístic', ocupant:'Barcelona Stay', escena:{ca:'Un menjador sense ningú.',es:'Un comedor sin nadie.',en:'A dining room with no one in it.'}},
+      {id:'4', pis:[4], r:[608,357,1120,443], tipus:'en venda', ocupant:{ca:'En venda',es:'En venta',en:'For sale'}, escena:{ca:'Parets arrencades. Un cartell: inversió, pisos premium.',es:'Paredes arrancadas. Un cartel: inversión, pisos premium.',en:'Stripped walls. A sign: investment, premium flats.'}},
+      {id:'3', pis:[3], r:[608,455,1120,530], tipus:'oficina', ocupant:'Vela Capital', escena:{ca:'Una oficina amb els llums encesos.',es:'Una oficina con las luces encendidas.',en:'An office with the lights on.'}},
+      {id:'2-1', pis:[2,1], r:[608,540,818,615], tipus:'turístic', escena:{ca:'Un dormitori amb la llum de la tauleta encesa.',es:'Un dormitorio con la luz de la mesita encendida.',en:'A bedroom with the bedside lamp on.'}},
+      {id:'2-2', pis:[2,2], r:[845,540,1120,615], tipus:'turístic', ocupant:'Tourist Apartments BCN', escena:{ca:'Un menjador idèntic al del 5è.',es:'Un comedor idéntico al del 5º.',en:'A dining room identical to the one on floor 5.'}},
+      {id:'1-1', pis:[1,1], r:[608,627,818,705], tipus:'buit', escena:{ca:'Un sofà tapat amb plàstic.',es:'Un sofá tapado con plástico.',en:'A sofa under plastic sheeting.'}},
+      {id:'1-2', pis:[1,2], r:[845,627,1120,705], tipus:'buit', escena:{ca:'Caixes de mudança per obrir, o per endur-se.',es:'Cajas de mudanza por abrir, o por llevarse.',en:'Moving boxes, waiting to be opened or taken away.'}},
+      {id:'garatge', nom:{ca:'Garatge',es:'Garaje',en:'Garage'}, r:[625,722,725,890], tipus:'botiga', escena:{ca:'Una persiana tancada.',es:'Una persiana cerrada.',en:'A closed shutter.'}},
+      {id:'vestibul', nom:{ca:'Vestíbul',es:'Vestíbulo',en:'Lobby'}, r:[768,722,868,890], tipus:'botiga', escena:{ca:'Un vestíbul de vidre i una porta de fusta nova.',es:'Un vestíbulo de cristal y una puerta de madera nueva.',en:'A glass lobby and a new wooden door.'}},
+      {id:'local', nom:{ca:'Local',es:'Local',en:'Shop unit'}, r:[920,722,1120,890], tipus:'botiga', escena:{ca:'Una altra persiana tancada.',es:'Otra persiana cerrada.',en:'Another closed shutter.'}}
+    ]}
+];
+/* ============================================= */
+
+const app = document.getElementById('app'), tg = document.getElementById('toggle');
+const S = { fase:0, vista:'facana', lang:'ca' };
+try { const l = localStorage.getItem('escala-lang'); if (T[l]) S.lang = l; } catch(e) {}
+const t = () => T[S.lang];
+const L = x => x == null ? '' : (typeof x === 'string' ? x : (x[S.lang] ?? x.ca ?? ''));
+const nom = p => p.pis ? t().floor(p.pis[0], p.pis[1]) : L(p.nom);
+const t0 = 1960, t1 = 2026, pct = y => (y - t0) / (t1 - t0) * 100;
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function parse(){
+  const h = location.hash.slice(1); let m;
+  if (m = h.match(/^(facana|seccio)-(.+)$/)) { const i = FASES.findIndex(f => f.id === m[2]); if (i >= 0) return {fase:i, vista:m[1]}; }
+  if (m = h.match(/^pis-([^-]+)-(.+)$/)) { const i = FASES.findIndex(f => f.id === m[1]); if (i >= 0 && FASES[i].pisos.some(p => p.id === m[2])) return {fase:i, vista:'seccio', pis:m[2]}; }
+  return {fase:0, vista:'facana'};
+}
+const go = h => { if (location.hash.slice(1) === h) render(); else location.hash = h; };
+
+function timeline(){
+  const f = FASES[S.fase]; let d = '';
+  for (let y = 1960, k = 0; y <= 2020; y += 10, k++) d += `<div class="dec ${k%2?'odd':''} ${FASES.some(x=>x.any===y)?'hide-n':''}" style="left:${pct(y)}%"><span>${y}</span></div>`;
+  const st = FASES.map((x,i) => `<button class="stop" data-i="${i}" style="left:${pct(x.any)}%" aria-current="${i===S.fase}" aria-label="${esc(L(x.etiqueta))}: ${esc(L(x.titol))}"><i></i><span>${esc(L(x.etiqueta))}</span></button>`).join('');
+  return `<nav class="timeline" aria-label="${t().tl}"><div class="track"><div class="rail"></div><div class="fill" style="width:${pct(f.any)}%"></div>${d}${st}</div></nav>`;
+}
+
+function edifici(){
+  const f = FASES[S.fase], sec = S.vista === 'seccio', [W,H] = f.mida;
+  const hs = sec ? f.pisos.map(p => { const [x1,y1,x2,y2] = p.r, who = L(p.familia) || L(p.ocupant);
+    return `<button class="hs" data-p="${p.id}" style="left:${x1/W*100}%;top:${y1/H*100}%;width:${(x2-x1)/W*100}%;height:${(y2-y1)/H*100}%" aria-label="${t().enter} ${esc(nom(p))}"><b>${esc(nom(p))}${who ? ' · '+esc(who) : ''}</b></button>`; }).join('') : '';
+  app.innerHTML = `<section class="stage"><div class="frame out" id="fr"><img src="${sec ? f.seccio : f.facana}" alt="${sec ? t().secAlt : t().facAlt}, ${esc(L(f.etiqueta))}">${hs}</div></section>
+    <section class="info"><div class="t"><span class="yr">${esc(L(f.etiqueta))}</span><h2>${esc(L(f.titol))}</h2><p>${esc(L(f.text))}</p></div>
+    <span class="hint">${sec ? t().hintSec : t().hintFac}</span></section>${timeline()}`;
+  const fr = document.getElementById('fr'), img = fr.querySelector('img');
+  const show = () => requestAnimationFrame(() => fr.classList.remove('out'));
+  img.complete ? show() : img.addEventListener('load', show);
+  fr.querySelectorAll('.hs').forEach(b => b.onclick = () => go(`pis-${f.id}-${b.dataset.p}`));
+  app.querySelectorAll('.stop').forEach(b => b.onclick = () => go(`${S.vista}-${FASES[+b.dataset.i].id}`));
+}
+
+function pis(id){
+  const f = FASES[S.fase], i = f.pisos.findIndex(p => p.id === id), p = f.pisos[i], [W,H] = f.mida, [x1,y1,x2,y2] = p.r, w = x2-x1, h = y2-y1;
+  const pic = p.foto
+    ? `<div class="pic"><img src="${esc(p.foto)}" alt="${esc(L(p.escena))}"></div>`
+    : `<div class="pic ph" role="img" aria-label="${esc(L(p.escena))}" style="aspect-ratio:${w}/${h};background-image:url(${f.seccio});background-size:${W/w*100}% ${H/h*100}%;background-position:${x1/(W-w)*100}% ${y1/(H-h)*100}%"></div>`;
+  const dades = p.fitxa || {};
+  const titol = L(p.familia) || L(p.ocupant) || (p.tipus === 'veí' ? t().who : nom(p));
+  const rows = (CAMPS[p.tipus] || []).map(k => { const v = k === 'familia' ? L(p.familia) : L(dades[k]);
+    return `<dt>${t().c[k]}</dt><dd class="${v?'':'buit'}">${v ? esc(v) : '—'}</dd>`; }).join('');
+  const hist = p.historia ? (p.historia[S.lang] || p.historia.ca || []) : [];
+  const story = (hist.length || p.record) ? `<div class="story">${hist.length ? `<h3>${t().story}</h3>${hist.map(x => `<p>${esc(x)}</p>`).join('')}` : ''}
+      ${p.record ? `<h3 class="mem">${t().mem}</h3><blockquote>«${esc(L(p.record))}»</blockquote>${p.recordAutor ? `<cite>— ${esc(L(p.recordAutor))}</cite>` : ''}` : ''}</div>` : '<div></div>';
+  const prev = f.pisos[(i-1+f.pisos.length)%f.pisos.length], next = f.pisos[(i+1)%f.pisos.length];
+  app.innerHTML = `<section class="pis">
+    <button class="back" id="bk">← ${t().back} · ${esc(L(f.etiqueta))}</button>
+    <figure>${pic}<figcaption>${esc(L(p.escena))}</figcaption></figure>
+    <article class="fitxa"><div class="head"><span class="yr">${esc(L(f.etiqueta))} · ${esc(nom(p))}</span><h2>${esc(titol)}</h2></div>
+      <dl>${rows}</dl>${story}
+      <div class="nav"><button data-p="${prev.id}">← ${esc(nom(prev))}</button><button data-p="${next.id}">${esc(nom(next))} →</button></div>
+      ${p.nota ? `<p class="note">${esc(L(p.nota))}</p>` : ''}${p.foto ? '' : `<p class="note">${t().note}</p>`}
+    </article></section>`;
+  document.getElementById('bk').onclick = () => go(`seccio-${f.id}`);
+  app.querySelectorAll('.nav button').forEach(b => b.onclick = () => go(`pis-${f.id}-${b.dataset.p}`));
+}
+
+function render(keepScroll){
+  Object.assign(S, {pis:null}, parse());
+  document.documentElement.lang = S.lang;
+  document.getElementById('sub').textContent = t().sub;
+  document.querySelectorAll('.lang button').forEach(b => b.setAttribute('aria-pressed', b.dataset.l === S.lang));
+  tg.setAttribute('aria-pressed', S.vista === 'seccio' && !S.pis);
+  tg.textContent = (S.vista === 'seccio' || S.pis) ? t().fac : t().sec;
+  S.pis ? pis(S.pis) : edifici();
+  if (!keepScroll) window.scrollTo(0,0);
+}
+tg.onclick = () => go(`${S.vista === 'seccio' || S.pis ? 'facana' : 'seccio'}-${FASES[S.fase].id}`);
+document.querySelectorAll('.lang button').forEach(b => b.onclick = () => {
+  S.lang = b.dataset.l; try { localStorage.setItem('escala-lang', S.lang); } catch(e) {} render(true);
+});
+document.addEventListener('keydown', e => {
+  if (S.pis || !['ArrowLeft','ArrowRight'].includes(e.key)) return;
+  const n = S.fase + (e.key === 'ArrowRight' ? 1 : -1);
+  if (n >= 0 && n < FASES.length) go(`${S.vista}-${FASES[n].id}`);
+});
+window.addEventListener('hashchange', () => render());
+render();
+}
+</script>
+</body>
+</html>
